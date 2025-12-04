@@ -18,11 +18,17 @@ add_subdirectory(./src/rayimage)
 add_subdirectory(./src/rayscene)
 add_subdirectory(./src/lodepng)
 
-target_link_libraries(raytracer 
-                      PUBLIC 
+target_link_libraries(raytracer
+                      PUBLIC
                       rayscene
                       raymath
                       rayimage
                       lodepng
                       )
+
+# Enable CTest
+enable_testing()
+
+# Add tests subdirectory
+add_subdirectory(tests)
 

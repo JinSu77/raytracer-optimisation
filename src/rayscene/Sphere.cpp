@@ -64,6 +64,7 @@ bool Sphere::intersects(Ray &r, Intersection &intersection, CullingType culling)
   // Calculate the exact point of collision: P1
   double a = sqrt(radius * radius - distance * distance);
   double t = OP.length() - a;
+  // double t = OP.length() - (a * 0.8);
   Vector3 P1 = r.GetPosition() + (r.GetDirection() * t);
 
   // Pre-calculate some useful values for rendering
