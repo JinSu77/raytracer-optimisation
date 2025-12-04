@@ -11,6 +11,15 @@ Ray::Ray(Vector3 pos, Vector3 dir) : position(pos)
   direction = dir.normalize();
 }
 
+// OPTIMISATION : Constructeur qui ne normalise PAS (assume direction déjà normalisée)
+Ray Ray::FromNormalized(Vector3 pos, Vector3 normalizedDir)
+{
+  Ray ray;
+  ray.position = pos;
+  ray.direction = normalizedDir;  // Pas de normalize() - économise un sqrt()!
+  return ray;
+}
+
 Ray::~Ray()
 {
 }

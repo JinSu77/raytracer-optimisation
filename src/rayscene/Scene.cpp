@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cmath>
 #include "Scene.hpp"
 #include "Intersection.hpp"
 
@@ -47,16 +48,22 @@ bool Scene::closestIntersection(Ray &r, Intersection &closest, CullingType culli
   Intersection intersection;
 
   double closestDistance = -1;
+  // OPTIMISATION : Utilise lengthSquared() pour les comparaisons
+  double closestDistanceSquared = -1;
   Intersection closestInter;
   for (int i = 0; i < objects.size(); ++i)
   {
     if (objects[i]->intersects(r, intersection, culling))
     {
+      // OPTIMISATION : Évite sqrt() en utilisant lengthSquared() pour la comparaison
+      double distanceSquared = (intersection.Position - r.GetPosition()).lengthSquared();
 
-      intersection.Distance = (intersection.Position - r.GetPosition()).length();
-      if (closestDistance < 0 || intersection.Distance < closestDistance)
+      if (closestDistanceSquared < 0 || distanceSquared < closestDistanceSquared)
       {
-        closestDistance = intersection.Distance;
+        // Seulement calculer sqrt() quand on trouve une nouvelle intersection plus proche
+        closestDistanceSquared = distanceSquared;
+        closestDistance = sqrt(distanceSquared);
+        intersection.Distance = closestDistance;
         closestInter = intersection;
       }
     }
@@ -84,9 +91,10 @@ Color Scene::raycast(Ray &r, Ray &camera, int castCount, int maxCastCount)
       // Reflect
       if (castCount < maxCastCount & intersection.Mat->cReflection > 0)
       {
+        // OPTIMISATION : reflect() retourne déjà un vecteur normalisé
         Vector3 reflectDir = r.GetDirection().reflect(intersection.Normal);
         Vector3 origin = intersection.Position + (reflectDir * COMPARE_ERROR_CONSTANT);
-        Ray reflectRay(origin, reflectDir);
+        Ray reflectRay = Ray::FromNormalized(origin, reflectDir);  // Pas de re-normalisation!
 
         pixel = pixel + raycast(reflectRay, camera, castCount + 1, maxCastCount) * intersection.Mat->cReflection;
       }
