@@ -9,12 +9,15 @@ Scene::Scene()
 
 Scene::~Scene()
 {
-  for (int i = 0; i < objects.size(); ++i)
+  // OPTIMISATION : Cache size() pour éviter appels répétés
+  const size_t objectCount = objects.size();
+  for (int i = 0; i < objectCount; ++i)
   {
     delete objects[i];
   }
 
-  for (int i = 0; i < lights.size(); ++i)
+  const size_t lightCount = lights.size();
+  for (int i = 0; i < lightCount; ++i)
   {
     delete lights[i];
   }
@@ -32,7 +35,9 @@ void Scene::addLight(Light *light)
 
 void Scene::prepare()
 {
-  for (int i = 0; i < objects.size(); ++i)
+  // OPTIMISATION : Cache size() pour éviter appels répétés
+  const size_t objectCount = objects.size();
+  for (int i = 0; i < objectCount; ++i)
   {
     objects[i]->applyTransform();
   }
@@ -51,7 +56,10 @@ bool Scene::closestIntersection(Ray &r, Intersection &closest, CullingType culli
   // OPTIMISATION : Utilise lengthSquared() pour les comparaisons
   double closestDistanceSquared = -1;
   Intersection closestInter;
-  for (int i = 0; i < objects.size(); ++i)
+
+  // OPTIMISATION : Cache size() - évite appel fonction à chaque itération
+  const size_t objectCount = objects.size();
+  for (int i = 0; i < objectCount; ++i)
   {
     if (objects[i]->intersects(r, intersection, culling))
     {

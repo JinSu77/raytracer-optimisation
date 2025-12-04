@@ -9,7 +9,9 @@ Mesh::Mesh() : SceneObject()
 
 Mesh::~Mesh()
 {
-    for (int i = 0; i < triangles.size(); ++i)
+    // OPTIMISATION : Cache size() pour éviter appels répétés
+    const size_t triangleCount = triangles.size();
+    for (int i = 0; i < triangleCount; ++i)
     {
         delete triangles[i];
     }
@@ -59,7 +61,9 @@ void Mesh::loadFromObj(std::string path)
 
 void Mesh::applyTransform()
 {
-    for (int i = 0; i < triangles.size(); ++i)
+    // OPTIMISATION : Cache size() pour éviter appels répétés
+    const size_t triangleCount = triangles.size();
+    for (int i = 0; i < triangleCount; ++i)
     {
         triangles[i]->material = this->material;
         triangles[i]->transform = transform;
@@ -73,7 +77,10 @@ bool Mesh::intersects(Ray &r, Intersection &intersection, CullingType culling)
 
     double closestDistance = -1;
     Intersection closestInter;
-    for (int i = 0; i < triangles.size(); ++i)
+
+    // OPTIMISATION : Cache size() - évite appel fonction à chaque itération
+    const size_t triangleCount = triangles.size();
+    for (int i = 0; i < triangleCount; ++i)
     {
         if (triangles[i]->intersects(r, tInter, culling))
         {
